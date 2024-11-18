@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // Import Axios
 import { Link } from 'react-router-dom';
 
 const Signup = () => {
     const [formData, setFormData] = useState({
-        name: '',
         email: '',
-        password: ''
+        password: '',
+        confirmPassword: '' // Add confirmPassword field
     });
 
     const handleChange = (e) => {
@@ -16,17 +17,22 @@ const Signup = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
-        alert('Signup successful!');
+        try {
+            const response = await axios.post('http://localhost:5000/signup', formData); // Connect to backend
+            console.log(response.data);
+            alert(response.data.message);
+        } catch (error) {
+            console.error('Error during signup:', error);
+            alert(error.response?.data?.message || 'Something went wrong!');
+        }
     };
 
     return (
         <div style={{ maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
             <h2>Signup</h2>
             <form onSubmit={handleSubmit}>
-            
                 <div style={{ marginBottom: '15px' }}>
                     <label>Email:</label>
                     <input
@@ -50,17 +56,16 @@ const Signup = () => {
                     />
                 </div>
                 <div style={{ marginBottom: '15px' }}>
-    <label>Confirm Password:</label>
-    <input
-        type="password"
-        name="confirmPassword"
-        value={formData.confirmPassword}
-        onChange={handleChange}
-        required
-        style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-    />
-</div>
-
+                    <label>Confirm Password:</label>
+                    <input
+                        type="password"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        required
+                        style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                    />
+                </div>
                 <button type="submit" style={{ width: '100%', padding: '10px', background: '#007BFF', color: 'white', border: 'none', borderRadius: '4px' }}>
                     Signup
                 </button>
